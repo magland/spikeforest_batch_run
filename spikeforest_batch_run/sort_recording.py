@@ -5,7 +5,7 @@ import os
 import shutil
 import random
 import string
-import .sorters as sorters
+from . import sorters as sorters
 from .summarize_sorting import summarize_sorting
 from .compare_with_truth import compare_with_truth
 
