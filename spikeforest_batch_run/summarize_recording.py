@@ -9,7 +9,7 @@ import mlprocessors as mlpr
 from matplotlib import pyplot as plt
 from .compute_units_info import compute_units_info
 
-def sf_summarize_recording(recording):
+def summarize_recording(recording):
   ret=deepcopy(recording)
   ret['computed_info']=compute_recording_info(recording)  
   firings_true_path=recording['directory']+'/firings_true.mda'
