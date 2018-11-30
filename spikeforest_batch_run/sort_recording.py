@@ -102,7 +102,7 @@ class IronClust(mlpr.Processor):
         
 class SpykingCircus(mlpr.Processor):
     NAME='SpykingCircus'
-    VERSION='0.1.3'
+    VERSION='0.1.4'
     
     recording_dir=mlpr.Input('Directory of recording',directory=True)
     channels=mlpr.IntegerListParameter(description='List of channels to use.',optional=True,default=[])
@@ -120,7 +120,7 @@ class SpykingCircus(mlpr.Processor):
         code=''.join(random.choice(string.ascii_uppercase) for x in range(10))
         tmpdir=os.environ.get('TEMPDIR','/tmp')+'/ironclust-tmp-'+code
         
-        num_workers=os.environ.get('NUM_WORKERS',2)
+        num_workers=os.environ.get('NUM_WORKERS',1)
             
         try:
             recording=si.MdaRecordingExtractor(self.recording_dir)
