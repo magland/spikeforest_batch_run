@@ -102,7 +102,7 @@ class IronClust(mlpr.Processor):
         
 class SpykingCircus(mlpr.Processor):
     NAME='SpykingCircus'
-    VERSION='0.1.2'
+    VERSION='0.1.3'
     
     recording_dir=mlpr.Input('Directory of recording',directory=True)
     channels=mlpr.IntegerListParameter(description='List of channels to use.',optional=True,default=[])
@@ -142,7 +142,8 @@ class SpykingCircus(mlpr.Processor):
                 n_cores=num_workers,
                 electrode_dimensions=None,
                 whitening_max_elts=self.whitening_max_elts,
-                clustering_max_elts=self.clustering_max_elts
+                clustering_max_elts=self.clustering_max_elts,
+                singularity_container=os.environ.get('SC_SINGULARITY_CONTAINER',None)
             )
             si.MdaSortingExtractor.writeSorting(sorting=sorting,save_path=self.firings_out)
         except:
