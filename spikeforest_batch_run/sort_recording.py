@@ -171,9 +171,6 @@ class KiloSort(mlpr.Processor):
     pc_per_chan=mlpr.IntegerParameter(optional=True,default=3,description='TODO')
     
     def run(self):
-        kilosort_src=os.environ.get('KILOSORT_SRC',None)
-        if not kilosort_src:
-            raise Exception('Environment variable not set: KILOSORT_SRC')
         code=''.join(random.choice(string.ascii_uppercase) for x in range(10))
         tmpdir=os.environ.get('TEMPDIR','/tmp')+'/kilosort-tmp-'+code
             
@@ -192,9 +189,7 @@ class KiloSort(mlpr.Processor):
                 merge_thresh=self.merge_thresh,
                 freq_min=self.freq_min,
                 freq_max=self.freq_max,
-                pc_per_chan=self.pc_per_chan,
-                kilosort_src=None, # github kilosort
-                ironclust_src=kilosort_src
+                pc_per_chan=self.pc_per_chan
             )
             si.MdaSortingExtractor.writeSorting(sorting=sorting,save_path=self.firings_out)
         except:

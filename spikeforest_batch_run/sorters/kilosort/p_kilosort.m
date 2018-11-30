@@ -7,7 +7,7 @@ end
 
 % prepare for kilosort execution
 addpath(genpath(kilosort_src));
-addpath(fullfile(ironclust_src, 'matlab'), fullfile(ironclust_src, 'mdaio'), fullfile(ironclust_src, 'npy-matlab'));    
+addpath(fullfile(ironclust_src, 'matlab'), fullfile(ironclust_src, 'matlab/mdaio'), fullfile(ironclust_src, 'matlab/npy-matlab'));    
 ops = import_ksort_(raw_fname, geom_fname, arg_fname, temp_path);
 
 % Run kilosort
