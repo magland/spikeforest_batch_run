@@ -152,12 +152,64 @@ class SpykingCircus(mlpr.Processor):
             raise
         shutil.rmtree(tmpdir)
 
+
+class KiloSort(mlpr.Processor):
+    NAME='KiloSort'
+    VERSION='0.1.0' # wrapper version
+    
+    recording_dir=mlpr.Input('Directory of recording',directory=True)
+    channels=mlpr.IntegerListParameter(description='List of channels to use.',optional=True,default=[])
+    firings_out=mlpr.Output('Output firings file')
+    
+    detect_sign=mlpr.IntegerParameter('Use -1 or 1, depending on the sign of the spikes in the recording')
+    adjacency_radius=mlpr.FloatParameter('Use -1 to include all channels in every neighborhood')
+    detect_threshold=mlpr.FloatParameter(optional=True,default=3,description='')
+    #prm_template_name=mlpr.StringParameter(optional=False,description='TODO')
+    freq_min=mlpr.FloatParameter(optional=True,default=300,description='Use 0 for no bandpass filtering')
+    freq_max=mlpr.FloatParameter(optional=True,default=6000,description='Use 0 for no bandpass filtering')
+    merge_thresh=mlpr.FloatParameter(optional=True,default=0.98,description='TODO')
+    pc_per_chan=mlpr.IntegerParameter(optional=True,default=3,description='TODO')
+    
+    def run(self):
+        kilosort_src=os.environ.get('KILOSORT_SRC',None)
+        if not kilosort_src:
+            raise Exception('Environment variable not set: KILOSORT_SRC')
+        code=''.join(random.choice(string.ascii_uppercase) for x in range(10))
+        tmpdir=os.environ.get('TEMPDIR','/tmp')+'/kilosort-tmp-'+code
+            
+        try:
+            recording=si.MdaRecordingExtractor(self.recording_dir)
+            if len(self.channels)>0:
+              recording=si.SubRecordingExtractor(parent_recording=recording,channel_ids=self.channels)
+            if not os.path.exists(tmpdir):
+                os.mkdir(tmpdir)
+            sorting=sorters.kilosort(
+                recording=recording,
+                tmpdir=tmpdir, 
+                detect_sign=self.detect_sign,
+                adjacency_radius=self.adjacency_radius,
+                detect_threshold=self.detect_threshold,
+                merge_thresh=self.merge_thresh,
+                freq_min=self.freq_min,
+                freq_max=self.freq_max,
+                pc_per_chan=self.pc_per_chan,
+                kilosort_src=None, # github kilosort
+                ironclust_src=kilosort_src
+            )
+            si.MdaSortingExtractor.writeSorting(sorting=sorting,save_path=self.firings_out)
+        except:
+            if os.path.exists(tmpdir):
+                shutil.rmtree(tmpdir)
+            raise
+        shutil.rmtree(tmpdir)
+
 #sf.sorters.ironclust(*, recording, tmpdir, detect_sign=-1, adjacency_radius=-1, detect_threshold=5, merge_thresh=0.98, freq_min=300, freq_max=6000, pc_per_chan=3, prm_template_name, ironclust_src=None)
         
 Processors=dict(
     MountainSort4=MountainSort4,
     IronClust=IronClust,
-    SpykingCircus=SpykingCircus
+    SpykingCircus=SpykingCircus,
+    KiloSort=KiloSort
 )
         
 def sort_recording(sorter,recording):
