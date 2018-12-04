@@ -49,7 +49,7 @@ def ironclust(*,
     _write_text_file(dataset_dir+'/argfile.txt',txt)
         
     print('Running IronClust...')
-    cmd_path = "addpath('{}', '{}/matlab', '{}/mdaio');".format(ironclust_src, ironclust_src, ironclust_src)
+    cmd_path = "addpath('{}', '{}/matlab', '{}/matlab/mdaio');".format(ironclust_src, ironclust_src, ironclust_src)
     #"p_ironclust('$(tempdir)','$timeseries$','$geom$','$prm$','$firings_true$','$firings_out$','$(argfile)');"
     cmd_call = "p_ironclust('{}', '{}', '{}', '', '', '{}', '{}');"\
         .format(tmpdir, dataset_dir+'/raw.mda', dataset_dir+'/geom.csv', tmpdir+'/firings.mda', dataset_dir+'/argfile.txt')
