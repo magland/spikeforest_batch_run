@@ -52,7 +52,7 @@ class MountainSort4(mlpr.Processor):
 
 class IronClust(mlpr.Processor):
     NAME='IronClust'
-    VERSION='4.2.6'
+    VERSION='4.2.7'
     
     recording_dir=mlpr.Input('Directory of recording',directory=True)
     channels=mlpr.IntegerListParameter(description='List of channels to use.',optional=True,default=[])
