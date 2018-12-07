@@ -53,7 +53,7 @@ def _do_run_job(job):
     return dict(error='Invalid job command: '+job['command'])
 
 def _set_job_status(job,status):
-  pa.set(key=dict(name='job_status',job=job),object=status)
+  kb.saveObject(key=dict(name='job_status',job=job),object=status)
 
 def _run_job(job):
   val=pa.get(key=job)
