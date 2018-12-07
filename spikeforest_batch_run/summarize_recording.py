@@ -44,7 +44,7 @@ def save_plot(fname,quality=40):
 # A MountainLab processor for generating the summary info for a recording
 class ComputeRecordingInfo(mlpr.Processor):
   NAME='ComputeRecordingInfo'
-  VERSION='0.1.0'
+  VERSION='0.1.1'
   recording_dir=mlpr.Input(directory=True,description='Recording directory')
   channels=mlpr.IntegerListParameter(description='List of channels to use.',optional=True,default=[])
   json_out=mlpr.Output('Info in .json file')
@@ -71,7 +71,7 @@ def compute_recording_info(recording):
 # A MountainLab processor for generating a plot of a portion of the timeseries
 class CreateTimeseriesPlot(mlpr.Processor):
   NAME='CreateTimeseriesPlot'
-  VERSION='0.1.6'
+  VERSION='0.1.7'
   recording_dir=mlpr.Input(directory=True,description='Recording directory')
   channels=mlpr.IntegerListParameter(description='List of channels to use.',optional=True,default=[])
   jpg_out=mlpr.Output('The plot as a .jpg file')
@@ -100,7 +100,7 @@ def create_timeseries_plot(recording):
 # A MountainLab processor for generating a plot of a portion of the timeseries
 class CreateWaveformsPlot(mlpr.Processor):
   NAME='CreateWaveformsPlot'
-  VERSION='0.1.0'
+  VERSION='0.1.1'
   recording_dir=mlpr.Input(directory=True,description='Recording directory')
   channels=mlpr.IntegerListParameter(description='List of channels to use.',optional=True,default=[])
   units=mlpr.IntegerListParameter(description='List of units to use.',optional=True,default=[])

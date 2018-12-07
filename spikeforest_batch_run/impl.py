@@ -2,6 +2,7 @@ from kbucket import client as kb
 from pairio import client as pa
 import random
 import string
+import datetime
 
 def clearBatch(*,batch_name):
   batch=kb.loadObject(key=dict(batch_name=batch_name))
@@ -51,6 +52,9 @@ def _do_run_job(job):
   else:
     return dict(error='Invalid job command: '+job['command'])
 
+def _set_job_status(job,status):
+  pa.set(key=dict(name='job_status',job=job),object=status)
+
 def _run_job(job):
   val=pa.get(key=job)
   if val:
@@ -58,17 +62,40 @@ def _run_job(job):
   code=''.join(random.choice(string.ascii_uppercase) for x in range(10))
   if not pa.set(key=job,value='in-process-'+code,overwrite=False):
     return
+  status=dict(
+    time_started=_make_timestamp(),
+    status='running'
+  )
+  _set_job_status(job,status)
+
   print('Running job: '+job['label'])
-  result=_do_run_job(job)
+  try:
+    result=_do_run_job(job)
+  except:
+    status['time_finished']=_make_timestamp()
+    status['status']='error'
+    status['error']='Exception in _do_run_job'
+    val=pa.get(key=job)
+    if val=='in-process-'+code:
+      _set_job_status(job,status)  
+    raise
+
   val=pa.get(key=job)
   if val!='in-process-'+code:
+    print('Not saving result because in-process code does not match {} <> {}.'.format(val,'in-process-'+code))
     return
+
+  status['time_finished']=_make_timestamp()
+  status['result']=result
   if 'error' in result:
     print('Error running job: '+result['error'])
+    status['status']='error'
+    status['error']=result['error']
+    _set_job_status(job,status)
     pa.set(key=job,value='error-'+code)
-    kb.save(key=dict(job=job,name='error'),value=result)
     return
-  kb.saveObject(key=job,object=result)
+  status['status']='finished'
+  kb.saveObject(key=job,object=result) # Not needed in future, because we should instead use the status object
 
 def assembleBatchResults(*,batch_name):
   batch=kb.loadObject(key=dict(batch_name=batch_name))
@@ -107,3 +134,6 @@ def _download_recordings(*,jobs):
           fname=dsdir+'/raw.mda'
           print('REALIZING FILE: '+fname)
           kb.realizeFile(fname)
+
+def _make_timestamp():
+  return str(datetime.datetime.now())
